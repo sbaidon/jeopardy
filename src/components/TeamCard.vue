@@ -1,0 +1,51 @@
+<template>
+  <div >
+      <md-card :style="styleObject">
+
+        <md-card-header>
+          <div class="md-title">{{ name }}</div>
+        </md-card-header>
+
+        <md-card-content>
+          <h3 class="md-subheading">Points</h3>
+          <div>
+            <h1>{{ points }}</h1>
+          </div>
+        </md-card-content>
+
+          <md-card-actions v-if="inGameView">
+            <md-button class="md-raised md-primary">Steal</md-button>
+          </md-card-actions>
+      </md-card>
+  </div>
+</template>
+
+<script>
+
+export default {
+  props: ['name', 'color', 'image', 'points', 'background', 'onClick'],
+  name: 'team-card',
+  data() {
+    return {
+    };
+  },
+  computed: {
+    inGameView() {
+      return this.$route.name === 'play';
+    },
+    styleObject() {
+      return {
+        height: '250px',
+        padding: '2em 3em',
+        backgroundColor: this.background,
+      };
+    },
+  },
+};
+</script>
+
+<!-- Add "scoped" attribute to limit CSS to this component only -->
+<style scoped>
+ 
+
+</style>
