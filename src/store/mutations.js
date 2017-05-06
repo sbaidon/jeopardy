@@ -19,7 +19,7 @@ const mutations = {
     }
   },
   [types.ADD_QUESTION](state, { level, question }) {
-    state.questions[level].push(question);
+    state[level].push(question);
   },
   [types.ADVANCE_TURN](state) {
     state.teamToAnswer =  (state.teamToAnswer + 1) % 4
@@ -37,6 +37,10 @@ const mutations = {
   },
   [types.ADD_POINTS](state, { points }) {
     state.teams[state.teamToAnswer].points += points;
+  },
+  [types.UPDATE_OPTIONS](state, [secondOption, thirdOption]) {
+    state.secondOption = secondOption;
+    state.thirdOption = thirdOption;
   }
 };
 

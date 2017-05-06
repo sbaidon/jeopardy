@@ -5,3 +5,4 @@ export const ADVANCE_TIMER = 'ADVANCE_TIMER';
 export const REGISTER_TEAM = 'REGISTER_TEAM';
 export const ADD_QUESTION = 'ADD_QUESTION';
 export const RESET_TIMER = 'RESET_TIMER';
+export const UPDATE_OPTIONS = 'UPDATE_OPTIONS';

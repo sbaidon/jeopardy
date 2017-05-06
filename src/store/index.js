@@ -11,16 +11,16 @@ const debug = process.env.NODE_ENV !== 'production';
 const state = {
   timer: 30,
   answer: '',
+  secondOption: '',
+  thirdOption: '',
   teamToAnswer: 0,
   teams: [],
   isTeamRegistered: false,
-  questions: {
-    firstLevel: [],
-    secondLevel: [],
-    thirdLevel: [],
-    fourthLevel: [],
-    fifthLevel: [],
-  },
+  firstLevel: [],
+  secondLevel: [],
+  thirdLevel: [],
+  fourthLevel: [],
+  fifthLevel: [],
 };
 
 export default new Vuex.Store({
