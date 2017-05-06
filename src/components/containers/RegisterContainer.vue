@@ -8,7 +8,8 @@
         <md-input :placeholder="placeholder" v-model="teamName"></md-input>
         <span class="md-error" v-text="error"></span>
       </md-input-container>
-      <md-button class="md-raised md-primary" @click.native="register()">Register</md-button>
+      <md-button v-if="!areTeamsRegistered" class="md-raised md-primary" @click.native="register()">Register</md-button>
+      <md-button v-if="areTeamsRegistered" class="md-raised md-primary" @click.native="startGame()">Start Game</md-button>
     </form>
     <div class="teams-container">
       <team-card class="item" v-for="(team, index) in teams" :name="team.name" :key="index" :color="team.color" :points="team.points"></team-card>
@@ -27,44 +28,34 @@ export default {
   data() {
     return {
       teamsRegistered: 0,
-      teamName: '',
-      teamRepeated: 'Please try another name',
       timeToStart: 3,
+      teamName: '',
     };
   },
   computed: {
     mainText() {
-      if (this.teams.length === 4) {
-        return `The Game Starts in ${this.timeToStart}`;
-      }
-      return 'Register 4 Teams';
+      return !this.areTeamsRegistered ? 'Register 4 Teams' : 'Ready to Play';
+    },
+    areTeamsRegistered() {
+      return this.teams.length === 4;
     },
     placeholder() {
-      return `Team # ${this.teams.length + 1}`;
+      return !this.areTeamsRegistered ? `Team # ${this.teams.length + 1}` : 'Ready';
     },
     error() {
-      return this.isTeamRegistered ? this.teamRepeated : "Type your team's name";
+      return this.isTeamRegistered ? 'Pleasy try another name' : "Type your team's name";
     },
     ...mapState(['isTeamRegistered', 'teams']),
   },
   methods: {
-    startPlay(length) {
-      if (length === 4) {
-        const interval = setInterval(() => {
-          this.timeToStart -= 1;
-        }, 1000);
-
-        const timeOut = setTimeout(() => {
-          this.$router.push('/play');
-          clearTimeout(timeOut);
-          clearInterval(interval);
-        }, 4000);
-      }
+    startGame() {
+      this.$router.push('/play');
     },
     register() {
-      this.registerTeam(this.teamName);
-      this.startPlay(this.teams.length);
-      this.teamName = '';
+      if (!this.areTeamsRegistered) {
+        this.registerTeam(this.teamName);
+        this.teamName = '';
+      }
     },
     ...mapActions(['registerTeam']),
   },

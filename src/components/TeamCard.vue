@@ -36,6 +36,7 @@ export default {
     styleObject() {
       return {
         height: '250px',
+        width: '200px',
         padding: '2em 3em',
         backgroundColor: this.background,
       };
@@ -46,6 +47,8 @@ export default {
 
 <!-- Add "scoped" attribute to limit CSS to this component only -->
 <style scoped>
- 
+ .md-title {
+    width: 100px;
+ }
 
 </style>
