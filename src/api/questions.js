@@ -1,19 +1,18 @@
 import axios from 'axios';
 
-import servicePaths from './servicePaths';
+import { QUESTIONS_PATHS } from './servicePaths';
 
 export default {
   getRandomQuestion() {
-    return axios.get(`${servicePaths.BASE_URL}${servicePaths.RANDOM_QUESTION}`);
+    return axios.get(`${QUESTIONS_PATHS.BASE_URL}${QUESTIONS_PATHS.RANDOM_QUESTION}`);
   },
   getCategories() {
-    return axios.get(`${servicePaths.BASE_URL}${servicePaths.CATEGORIES}`);
+    return axios.get(`${QUESTIONS_PATHS.BASE_URL}${QUESTIONS_PATHS.CATEGORIES}`);
   },
   getCategory(id) {
-    return axios.get(`${servicePaths.BASE_URL}${servicePaths.CATEGORY}?=${id}`);
+    return axios.get(`${QUESTIONS_PATHS.BASE_URL}${QUESTIONS_PATHS.CATEGORY}?=${id}`);
   },
   setInvalid(id) {
-    return axios.get(`${servicePaths.BASE_URL}${servicePaths.INVLIDA}?=${id}`);
+    return axios.get(`${QUESTIONS_PATHS.BASE_URL}${QUESTIONS_PATHS.INVLIDA}?=${id}`);
   },
-
 };
