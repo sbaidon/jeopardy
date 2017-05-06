@@ -1,23 +1,21 @@
 <template>
   <div class="question">
-    <md-card  @click.native="openDialog(question.id)" class="question" :class="{ 'md-warn': isAnswered }">
+    <md-card  @click.native.once="openDialog(id)" class="question" :class="{ 'md-warn': wasClicked }">
         <md-card-content>
           {{ points }}
         </md-card-content>
       </md-card>
 
-    <md-dialog :ref="question.id"  @open="onOpen" @close="onClose">
+    <md-dialog :ref="id"  @open="onOpen" @close="onClose">
       <md-dialog-title v-text="dialogTitle"></md-dialog-title>
 
-      <md-dialog-content v-text="question.question"></md-dialog-content>
+      <md-dialog-content v-text="question"></md-dialog-content>
 
       <md-dialog-actions>
         <form>
-            <md-radio v-model="answer" id="my-test1" name="my-test-group1" :md-value="question.answer" >{{ question.answer }}</md-radio>
-            <md-radio v-model="answer" id="my-test2" name="my-test-group1" md-value="2">Another radio</md-radio>
-            <md-radio v-model="answer" id="my-test3" name="my-test-group1" md-value="3">Another another radio</md-radio>
+          <md-radio v-for="(option, index) in options" key="index" v-model="response" name="test" :md-value="option">{{ option }} </md-radio>
         </form>
-        <md-button class="md-primary" @click.native="closeDialog(question.id)">Ok</md-button>
+        <md-button class="md-primary" @click.native="closeDialog(id)">Ok</md-button>
          <timer></timer>
       </md-dialog-actions>
     </md-dialog>
@@ -25,39 +23,58 @@
 </template>
 
 <script>
-import { mapActions, mapMutations, mapState } from 'vuex';
+import { mapActions, mapMutations, mapState, mapGetters } from 'vuex';
 import Timer from './Timer';
 
 export default {
-  props: ['points', 'question', 'category'],
+  props: ['points', 'answer', 'category', 'question', 'id'],
   name: 'question-card',
   components: { Timer },
   data() {
     return {
-      activeTeam: 0,
-      dialogTitle: `To win ${this.points}`,
-      answer: '',
-      isAnswered: false,
+      response: '',
+      wasClicked: false,
     };
   },
   computed: {
-    ...mapState(['timer']),
+    ...mapState(['timer', 'secondOption', 'thirdOption']),
+    ...mapGetters(['getOptions']),
+    dialogTitle() {
+      return `To win ${this.points}`;
+    },
+    options() {
+      return this.shuffle([...this.getOptions, this.answer]);
+    },
+  },
+  mounted() {
+
   },
   methods: {
-    ...mapActions(['advanceTurn', 'checkAnswer']),
+    ...mapActions(['advanceTurn', 'checkAnswer', 'getRelatedWord']),
     ...mapMutations(['ADVANCE_TIMER', 'RESET_TIMER']),
+    shuffle(a) {
+      /* eslint-disable */
+      for (let i = a.length; i; i--) {
+        let j = Math.floor(Math.random() * i);
+        [a[i - 1], a[j]] = [a[j], a[i - 1]];
+      }
+      /* eslint-enable */
+      return a;
+    },
     openDialog(ref) {
+      this.getRelatedWord({ word: this.answer, option: 'secondOption' });
+      this.getRelatedWord({ word: this.answer, option: 'thirdOption' });
       this.$refs[ref].open();
     },
     closeDialog(ref) {
       this.$refs[ref].close();
     },
     onOpen() {
-      this.isAnswered = true;
+      this.wasClicked = true;
       this.interval = setInterval(() => {
         if (this.timer <= 0) {
           window.clearInterval(this.interval);
-          this.closeDialog(this.question.id);
+          this.closeDialog(this.id);
         }
         this.ADVANCE_TIMER();
       }, 1000);
@@ -66,8 +83,8 @@ export default {
       window.clearInterval(this.interval);
       this.RESET_TIMER();
       this.checkAnswer({
-        answer: this.answer,
-        realAnswer: this.question.answer,
+        answer: this.response,
+        realAnswer: this.answer,
         points: this.points,
       });
       this.advanceTurn();
