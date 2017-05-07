@@ -41,7 +41,7 @@ const mutations = {
   [types.UPDATE_OPTIONS](state, [secondOption, thirdOption]) {
     state.secondOption = secondOption;
     state.thirdOption = thirdOption;
-  }
+  },
 };
 
 export default mutations;

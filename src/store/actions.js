@@ -11,10 +11,16 @@ const actions = {
     commit(types.ADVANCE_TURN);
   },
   getQuestion({ commit }, level) {
+    let question = {};
+    console.log(level);
     api.getRandomQuestion()
     .then(({ data }) => {
-      const question = data[0];
-      commit(types.ADD_QUESTION, { level, question });
+      question = data[0];
+      return wordApi.getRelatedWord(question.answer);
+    })
+    .then(({ data }) => {
+      question.options = [question.answer, data[0].word, data[1].word];
+      commit(types.ADD_QUESTION, { level, question: question })
     })
     .catch(error => console.log(error));
   },

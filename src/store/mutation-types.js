@@ -6,3 +6,4 @@ export const REGISTER_TEAM = 'REGISTER_TEAM';
 export const ADD_QUESTION = 'ADD_QUESTION';
 export const RESET_TIMER = 'RESET_TIMER';
 export const UPDATE_OPTIONS = 'UPDATE_OPTIONS';
+export const REGISTER_REF = 'REGISTER_REF';
