@@ -6,7 +6,7 @@
 
     <md-dialog-actions>
       <form>
-        <md-radio v-for="(option, index) in options" key="index" v-model="response" name="test" :md-value="option">{{ option }} </md-radio>
+        <md-radio v-for="(option, index) in options" key="index" name="test" v-model="response" :md-value="option" @change="onChange">{{ option }} </md-radio>
       </form>
       <md-button class="md-primary" @click.native="closeDialog">Ok</md-button>
        <timer></timer>
@@ -19,7 +19,7 @@
 import Timer from './Timer';
 
 export default {
-  props: ['title', 'content', 'options', 'onOpen', 'onClose', 'closeDialog', 'dialogRef'],
+  props: ['title', 'content', 'options', 'onOpen', 'onClose', 'closeDialog', 'dialogRef', 'onChange'],
   name: 'dialog-question',
   components: { Timer },
   data() {

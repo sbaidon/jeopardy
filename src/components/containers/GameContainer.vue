@@ -34,7 +34,7 @@
     </div>
 
     <dialog-question ref="dialog" :title="dialogTitle" :content='activeQuestion.question' :options='activeQuestion.options'
-    :onOpen="onOpen" :onClose='onClose' :closeDialog="closeDialog" :dialogRef="dialogRef">
+    :onOpen="onOpen" :onClose='onClose' :closeDialog="closeDialog" :dialogRef="dialogRef" :onChange="onChange">
       
     </dialog-question>
 
@@ -97,6 +97,9 @@ export default {
       this.activeQuestion = question;
       this.$refs.dialog.$refs[this.dialogRef].open();
     },
+    onChange(response) {
+      this.response = response;
+    },
     closeDialog() {
       this.$refs.dialog.$refs[this.dialogRef].close();
     },
@@ -112,9 +115,8 @@ export default {
     onClose() {
       window.clearInterval(this.interval);
       this.RESET_TIMER();
-      const { response } = this.$refs.dialog;
       this.checkAnswer({
-        answer: response,
+        answer: this.response,
         realAnswer: this.activeQuestion.answer,
         points: this.activeQuestion.points,
       });
