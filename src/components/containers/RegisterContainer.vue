@@ -12,7 +12,7 @@
       <md-button v-if="areTeamsRegistered" class="md-raised md-primary" @click.native="startGame()">Start Game</md-button>
     </form>
     <div class="teams-container">
-      <team-card class="item" v-for="(team, index) in teams" :name="team.name" :key="index" :color="team.color" :points="team.points"></team-card>
+      <team-card class="item" v-for="(team, index) in teams" :name="team.name" :key="index" :points="team.points"></team-card>
     </div>
   </div>
 </template>
@@ -25,10 +25,14 @@ import TeamCard from '../TeamCard';
 export default {
   name: 'register-container',
   components: { TeamCard },
+  beforeRouteEnter(to, from, next) {
+    next((vm) => {
+      vm.resetTeams();
+    });
+  },
   data() {
     return {
       teamsRegistered: 0,
-      timeToStart: 3,
       teamName: '',
     };
   },
@@ -48,16 +52,19 @@ export default {
     ...mapState(['isTeamRegistered', 'teams']),
   },
   methods: {
+    resetTeamName() {
+      this.teamName = '';
+    },
     startGame() {
       this.$router.push('/play');
     },
     register() {
       if (!this.areTeamsRegistered) {
         this.registerTeam(this.teamName);
-        this.teamName = '';
+        this.resetTeamName();
       }
     },
-    ...mapActions(['registerTeam']),
+    ...mapActions(['registerTeam', 'resetTeams']),
   },
 };
 </script>

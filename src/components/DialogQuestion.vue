@@ -9,23 +9,31 @@
         <md-radio v-for="(option, index) in options" key="index" name="test" v-model="response" :md-value="option" @change="onChange">{{ option }} </md-radio>
       </form>
       <md-button class="md-primary" @click.native="closeDialog">Ok</md-button>
-       <timer></timer>
+       <slot></slot>
     </md-dialog-actions>
   </md-dialog>
 </template>
 
-
 <script>
-import Timer from './Timer';
 
 export default {
-  props: ['title', 'content', 'options', 'onOpen', 'onClose', 'closeDialog', 'dialogRef', 'onChange'],
+  props: ['title', 'content', 'options', 'closeDialog', 'dialogRef'],
   name: 'dialog-question',
-  components: { Timer },
   data() {
     return {
       response: '',
     };
+  },
+  methods: {
+    onChange(value) {
+      this.$emit('responseChange', value);
+    },
+    onOpen() {
+      this.$emit('onOpen');
+    },
+    onClose() {
+      this.$emit('onClose');
+    },
   },
 };
 </script>

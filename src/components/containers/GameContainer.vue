@@ -3,39 +3,23 @@
     <div class="left-panel">LEFT</div>
 
     <div class="center-panel">
-      <question-card v-for="(question, index) in firstLevel" 
-        :question="question.question" :answer="question.answer" :points="100" :onClick="openDialog" 
-        :key="index" :id="question.id" :category="question.category" :options="shuffle(question.options)">
-      </question-card>
-      <question-card v-for="(question, index) in secondLevel" 
-        :question="question.question" :answer="question.answer" :points="200" :onClick="openDialog"
-        :key="index" :id="question.id" :category="question.category" :options="shuffle(question.options)">
-      </question-card>
-      <question-card v-for="(question, index) in thirdLevel" 
-        :question="question.question" :answer="question.answer" :points="300" :onClick="openDialog"
-        :key="index" :id="question.id" :category="question.category" :options="shuffle(question.options)">
-      </question-card>
-      <question-card v-for="(question, index) in fourthLevel" 
-        :question="question.question":answer="question.answer" :points="400" :onClick="openDialog"
-        :key="index" :id="question.id" :category="question.category" :options="shuffle(question.options)">
-      </question-card>
-      <question-card v-for="(question, index) in fifthLevel" 
-        :question="question.question" :answer="question.answer" :points="500" :onClick="openDialog"
+      <question-card v-for="(question, index) in questions" 
+        :question="question.question" :answer="question.answer" :points="getPoints(index)" @questionClicked="questionClicked" 
         :key="index" :id="question.id" :category="question.category" :options="shuffle(question.options)">
       </question-card>
     </div>
 
     <div class="right-panel">
-      <timer></timer>
+      <timer :time="timer"></timer>
     </div>
 
     <div class="teams-container">
-      <team-card  v-for="(team, index) in teams"  :background="background(index)" :points="team.points" :key="index" :name="team.name" :color="team.color" image="https://d30y9cdsu7xlg0.cloudfront.net/png/14261-200.png" ></team-card>
+      <team-card  v-for="(team, index) in teams"  :background="background(index)" :points="team.points" :key="index" :name="team.name"></team-card>
     </div>
 
     <dialog-question ref="dialog" :title="dialogTitle" :content='activeQuestion.question' :options='activeQuestion.options'
-    :onOpen="onOpen" :onClose='onClose' :closeDialog="closeDialog" :dialogRef="dialogRef" :onChange="onChange">
-      
+    @onOpen="onOpen" @onClose='onClose' :closeDialog="closeDialog" :dialogRef="dialogRef" @responseChange="onChange">
+      <timer :time="timer"></timer>
     </dialog-question>
 
 
@@ -43,7 +27,7 @@
 </template>
 
 <script>
-import { mapState, mapActions, mapGetters, mapMutations } from 'vuex';
+import { mapState, mapActions, mapMutations } from 'vuex';
 
 import TeamCard from '../TeamCard';
 import QuestionCard from '../QuestionCard';
@@ -53,48 +37,41 @@ import DialogQuestion from '../DialogQuestion';
 export default {
   name: 'game-container',
   components: { TeamCard, QuestionCard, Timer, DialogQuestion },
+  beforeRouteEnter(to, from, next) {
+    next((vm) => {
+      if (!vm.teams.length) {
+        vm.$router.push('/');
+        return;
+      }
+
+      vm.resetQuestions();
+      vm.getQuestions();
+    });
+  },
   data() {
     return {
       dialogRef: 'dialog',
       activeQuestion: {},
+      numberOfQuestions: 25,
     };
   },
-  mounted() {
-    if (this.allQuestions.length <= 0) {
-      [1, 2, 3, 4, 5].forEach(() => {
-        this.getQuestion('firstLevel');
-      });
-
-      [1, 2, 3, 4, 5].forEach(() => {
-        this.getQuestion('secondLevel');
-      });
-
-      [1, 2, 3, 4, 5].forEach(() => {
-        this.getQuestion('thirdLevel');
-      });
-
-      [1, 2, 3, 4, 5].forEach(() => {
-        this.getQuestion('fourthLevel');
-      });
-
-      [1, 2, 3, 4, 5].forEach(() => {
-        this.getQuestion('fifthLevel');
-      });
-    }
-  },
   computed: {
-    ...mapState(['teams', 'firstLevel', 'secondLevel',
-      'thirdLevel', 'fourthLevel', 'fifthLevel', 'teamToAnswer', 'timer', 'ref']),
-    ...mapGetters(['allQuestions']),
+    ...mapState(['teams', 'questions', 'teamToAnswer', 'timer']),
     dialogTitle() {
       return `To win ${this.activeQuestion.points}`;
     },
   },
   methods: {
-    ...mapActions(['getQuestion', 'startTimer', 'getRelatedWord', 'advanceTurn', 'checkAnswer']),
+    ...mapActions(['getQuestion', 'advanceTurn', 'checkAnswer', 'resetQuestions']),
     ...mapMutations(['ADVANCE_TIMER', 'RESET_TIMER']),
-    openDialog(question) {
+    setActiveQuestion(question) {
       this.activeQuestion = question;
+    },
+    questionClicked(question) {
+      this.setActiveQuestion(question);
+      this.openDialog();
+    },
+    openDialog() {
       this.$refs.dialog.$refs[this.dialogRef].open();
     },
     onChange(response) {
@@ -131,6 +108,14 @@ export default {
       /* eslint-enable */
       return [...a];
     },
+    getQuestions() {
+      for (let i = 0; i < this.numberOfQuestions; i += 1) {
+        this.getQuestion();
+      }
+    },
+    getPoints(index) {
+      return ((index % 5) + 1) * 100;
+    },
     background(index) {
       if (this.teamToAnswer === index) {
         return 'goldenrod';
@@ -153,19 +138,21 @@ export default {
   }
 
   .left-panel, .right-panel, .center-panel {
-    height: 70vh;
+    height: 60vh;
   }
 
   .left-panel, .right-panel {
-    flex: 1 0 20%;
+    flex: 1 0 30%;
   }
 
   .center-panel {
-    max-width: 60%;
-    flex: 1 1 60%;
+    max-width: 40%;
+    flex: 1 0 60%;
     display: flex;
-    flex-flow: row wrap;
-    align-items: center;
+    flex-flow: column wrap;
+    justify-content: center;
+    margin-top: 20px;
+    margin-bottom: 20px;
   }
 
   .teams-container {
@@ -173,7 +160,7 @@ export default {
     display: flex;
     justify-content: space-around;
     align-items: center;
-    flex: 1 0 100%;
+    flex: 1;
   }
 
 </style>

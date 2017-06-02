@@ -7,12 +7,18 @@ const actions = {
   registerTeam({ commit }, name) {
     commit(types.REGISTER_TEAM, { name });
   },
+  resetTeams({ commit }) {
+    commit(types.RESET_TEAMS);
+  },
+  resetQuestions({ commit }) {
+    commit(types.RESET_QUESTIONS);
+  },
   advanceTurn({ commit }) {
     commit(types.ADVANCE_TURN);
   },
-  getQuestion({ commit }, level) {
+  getQuestion({ commit, state }) {
     let question = {};
-    console.log(level);
+
     api.getRandomQuestion()
     .then(({ data }) => {
       question = data[0];
@@ -20,22 +26,23 @@ const actions = {
     })
     .then(({ data }) => {
       question.options = [question.answer, data[0].word, data[1].word];
-      commit(types.ADD_QUESTION, { level, question: question })
+      commit(types.ADD_QUESTION, { question })
     })
-    .catch(error => console.log(error));
+    .catch(error => {
+      console.log(error);
+      commit(types.ADD_QUESTION, { question: {
+        question: 'BONUS',
+        answer: 'THIS IS THE ANSWER',
+        options: ['THIS IS THE ANSWER', 'second option', 'third option'],
+        value: 1000,
+        }})
+    });
   },
   checkAnswer({ commit }, { answer, realAnswer, points }) {
     if (answer === realAnswer) {
       commit(types.ADD_POINTS, { points });
     }
   },
-  getRelatedWord({ commit }, { word }) {
-    wordApi.getRelatedWord(word)
-    .then(({ data }) => {
-      const relatedWords = [data[0].word, data[1].word];
-      commit(types.UPDATE_OPTIONS,  relatedWords)
-    });
-  }
 };
 
 export default actions

@@ -12,7 +12,7 @@
 import Timer from './Timer';
 
 export default {
-  props: ['points', 'answer', 'category', 'question', 'id', 'options', 'onClick'],
+  props: ['points', 'answer', 'category', 'question', 'id', 'options'],
   name: 'question-card',
   components: { Timer },
   data() {
@@ -31,7 +31,7 @@ export default {
         points: this.points,
       };
       this.wasClicked = true;
-      this.onClick(question);
+      this.$emit('questionClicked', question);
     },
   },
 };
@@ -41,7 +41,6 @@ export default {
 <style scoped>
   .question {
     flex: 1  0 20%;
-    height: 100px;
     text-align: center
   }
 

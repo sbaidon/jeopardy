@@ -1,5 +1,4 @@
 import * as types from './mutation-types';
-import utils from './utils';
 
 /* eslint-disable */
 
@@ -9,7 +8,6 @@ const mutations = {
     if (!record) {
       state.teams.push({
         name,
-        color: utils.getRandomColor(),
         points: 0,
         questionsAnswered: 0,
       });
@@ -18,19 +16,17 @@ const mutations = {
       state.isTeamRegistered = true;
     }
   },
-  [types.ADD_QUESTION](state, { level, question }) {
-    state[level].push(question);
+  [types.ADD_QUESTION](state, { question }) {
+    state.questions.push(question);
   },
   [types.ADVANCE_TURN](state) {
     state.teamToAnswer =  (state.teamToAnswer + 1) % 4
   },
-  [types.ADVANCE_TIMER](state, interval) {
+  [types.ADVANCE_TIMER](state) {
     if(state.timer <= 0) {
       state.timer = 30;
-      return clearInterval(interval);
     }
     state.timer -= 1;
-    return clearInterval(interval);
   },
   [types.RESET_TIMER](state) {
     state.timer = 30;
@@ -38,9 +34,11 @@ const mutations = {
   [types.ADD_POINTS](state, { points }) {
     state.teams[state.teamToAnswer].points += points;
   },
-  [types.UPDATE_OPTIONS](state, [secondOption, thirdOption]) {
-    state.secondOption = secondOption;
-    state.thirdOption = thirdOption;
+  [types.RESET_TEAMS](state) {
+    state.teams = [];
+  },
+  [types.RESET_QUESTIONS](state) {
+    state.questions = [];
   },
 };
 

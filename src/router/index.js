@@ -1,6 +1,5 @@
 import Vue from 'vue';
 import Router from 'vue-router';
-import Hello from '@/components/Hello';
 import RegisterContainer from '@/components/containers/RegisterContainer';
 import GameContainer from '@/components/containers/GameContainer';
 
@@ -10,8 +9,7 @@ export default new Router({
   routes: [
     {
       path: '/',
-      name: 'start',
-      component: Hello,
+      redirect: '/register',
     },
     {
       path: '/register',

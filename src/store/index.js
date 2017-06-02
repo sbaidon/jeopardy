@@ -12,11 +12,7 @@ const state = {
   timer: 30,
   teamToAnswer: 0,
   teams: [],
-  firstLevel: [],
-  secondLevel: [],
-  thirdLevel: [],
-  fourthLevel: [],
-  fifthLevel: [],
+  questions: [],
 };
 
 export default new Vuex.Store({

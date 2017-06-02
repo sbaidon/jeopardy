@@ -13,9 +13,6 @@
           </div>
         </md-card-content>
 
-          <md-card-actions v-if="inGameView">
-            <md-button class="md-raised md-primary">Steal</md-button>
-          </md-card-actions>
       </md-card>
   </div>
 </template>
@@ -23,7 +20,7 @@
 <script>
 
 export default {
-  props: ['name', 'color', 'image', 'points', 'background', 'onClick'],
+  props: ['name', 'points', 'background', 'onClick'],
   name: 'team-card',
   data() {
     return {
